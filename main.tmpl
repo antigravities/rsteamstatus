@@ -1,0 +1,9 @@
+{{ define "Row" }}| {{ .Name }} | [{{ .Status }}](https://steamstat.us/#{{ .Good }}) |{{ end }}
+
+|   |   |
+|:--|--:|
+{{ template "Row" (index .Statuses "online") }}
+{{ template "Row" (index .Statuses "cms") }}
+{{ template "Row" (index .Statuses "store") }}
+{{ template "Row" (index .Statuses "community") }}
+{{ template "Row" (index .Statuses "webapi") }}
