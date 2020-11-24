@@ -1,0 +1,28 @@
+name: Build and Test
+on:
+  - push
+
+jobs:
+  linux64:
+    name: Build and Test (Linux x64)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.15
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.15
+      
+      - name: Checkout
+        uses: actions/checkout@v1
+      
+      - name: Download dependencies and build
+        run: GOOS=linux GOARCH=amd64 go build -i -o rsteamstatus
+      
+      - name: Run tests
+        run: go test
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: rsteamstatus-linux-x64
+          path: rsteamstatus

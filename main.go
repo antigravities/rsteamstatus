@@ -142,31 +142,39 @@ func openTemplate(path string) (*template.Template, error) {
 	return template.New("template").Parse(string(byts))
 }
 
-func main() {
+func run() error {
 	status, err := fetchStatus()
 	if err != nil || status == nil {
-		panic(err)
+		return err
 	}
 
 	remap := remapStatus(status)
 
 	tmpl, err := openTemplate("main.tmpl")
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	writer := bytes.NewBuffer([]byte{})
 
 	if err := tmpl.Execute(writer, remap); err != nil {
-		panic(err)
+		return err
 	}
 
 	byts, err := ioutil.ReadAll(writer)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	if err := updateSidebar(string(byts)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func main() {
+	if err := run(); err != nil {
 		panic(err)
 	}
 }
