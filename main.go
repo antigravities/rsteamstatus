@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -9,6 +10,9 @@ import (
 	"os"
 	"strings"
 	"text/template"
+
+	_ "github.com/joho/godotenv/autoload" // yes, I'm lazy
+	"github.com/vartanbeno/go-reddit/reddit"
 )
 
 var translated map[string]string = map[string]string{
@@ -18,6 +22,11 @@ var translated map[string]string = map[string]string{
 	"store":     "Store",
 	"community": "Community",
 }
+
+var (
+	httpClient *http.Client    = &http.Client{}
+	ctx        context.Context = context.Background()
+)
 
 func fetchStatus() (*Status, error) {
 	if os.Getenv("R_STATUS_URL") == "" {
@@ -57,8 +66,52 @@ func isGood(status string) string {
 	return "bad"
 }
 
+func empty(item string) bool {
+	return len(item) == 0
+}
+
+func makeReddit() (*reddit.Client, error) {
+	if empty(os.Getenv("R_CLIENT_ID")) || empty(os.Getenv("R_CLIENT_SECRET")) || empty(os.Getenv("R_USERNAME")) || empty(os.Getenv("R_PASSWORD")) || empty(os.Getenv("R_SUBREDDIT")) {
+		return nil, fmt.Errorf("One or more required environment variables were empty")
+	}
+
+	return reddit.NewClient(
+		reddit.WithCredentials(os.Getenv("R_CLIENT_ID"), os.Getenv("R_CLIENT_SECRET"), os.Getenv("R_USERNAME"), os.Getenv("R_PASSWORD")),
+		reddit.WithUserAgent("Golang:get.cutie.cafe/rsteamstatus:1.0 (by /u/antigravities)"),
+	)
+}
+
+func updateSidebar(statusText string) error {
+	bot, err := makeReddit()
+	if err != nil {
+		return err
+	}
+
+	page, _, err := bot.Wiki.Page(ctx, os.Getenv("R_SUBREDDIT"), "config/sidebar")
+	if err != nil {
+		return err
+	}
+
+	rangeX := strings.Index(page.Content, "[](#StatusStartMarker)")
+	rangeY := strings.Index(page.Content, "[](#StatusEndMarker)")
+
+	status := "[](#StatusStartMarker)" + statusText + "[](#StatusEndMarker)"
+
+	content := strings.Replace(page.Content, page.Content[rangeX:rangeY], status, 1)
+
+	_, err = bot.Wiki.Edit(ctx, &reddit.WikiPageEditRequest{
+		Subreddit: os.Getenv("R_SUBREDDIT"),
+		Page:      "config/sidebar",
+		Content:   content,
+		Reason:    "/r/Steam status update",
+	})
+
+	return err
+}
+
 func remapStatus(status *Status) *Remap {
 	remap := &Remap{}
+	// fuck it, ship it
 	remap.Statuses = make(map[string]struct {
 		Name   string
 		Good   string
@@ -66,7 +119,6 @@ func remapStatus(status *Status) *Remap {
 	})
 
 	for _, svc := range status.Services {
-		// fuck it, ship it
 		remap.Statuses[svc[0].(string)] = struct {
 			Name   string
 			Good   string
@@ -114,5 +166,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(string(byts))
+	if err := updateSidebar(string(byts)); err != nil {
+		panic(err)
+	}
 }
