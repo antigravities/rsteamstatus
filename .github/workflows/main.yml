@@ -20,6 +20,13 @@ jobs:
       
       - name: Run tests
         run: go test
+        env:
+          R_STATUS_URL: ${{ secrets.R_STATUS_URL }}
+          R_CLIENT_ID: ${{ secrets.R_CLIENT_ID }}
+          R_CLIENT_SECRET: ${{ secrets.R_CLIENT_SECRET }}
+          R_USERNAME: ${{ secrets.R_USERNAME }}
+          R_PASSWORD: ${{ secrets.R_PASSWORD }}
+          R_SUBREDDIT: uniQTestArea
 
       - name: Upload artifact
         uses: actions/upload-artifact@v1
