@@ -95,7 +95,7 @@ func updateSidebar(statusText string) error {
 	rangeX := strings.Index(page.Content, "[](#StatusStartMarker)")
 	rangeY := strings.Index(page.Content, "[](#StatusEndMarker)")
 
-	status := "[](#StatusStartMarker)" + statusText + "[](#StatusEndMarker)"
+	status := "[](#StatusStartMarker)" + statusText
 
 	content := strings.Replace(page.Content, page.Content[rangeX:rangeY], status, 1)
 
