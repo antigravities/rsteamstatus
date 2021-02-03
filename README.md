@@ -23,7 +23,10 @@ R_CLIENT_SECRET=
 R_USERNAME=
 R_PASSWORD=
 R_SUBREDDIT=
+R_USER_AGENT=
 ```
+
+`R_USER_AGENT` and your outgoing IP must be whitelisted by the secret place. `R_USER_AGENT` is also the `User-Agent` the reddit bot uses (good example: `rsteamstatus/X.X (/u/your_username; your@email.tld)`). Contact the developer of the secret place with your use case for info.
 
 ## License
 ```

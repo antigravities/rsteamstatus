@@ -36,7 +36,7 @@ func fetchStatus() (*Status, error) {
 	httpClient := &http.Client{}
 
 	req, err := http.NewRequest("GET", os.Getenv("R_STATUS_URL"), nil)
-	req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36")
+	req.Header.Add("User-Agent", os.Getenv("R_USER_AGENT"))
 
 	resp, err := httpClient.Do(req)
 	if err != nil {
@@ -71,13 +71,13 @@ func empty(item string) bool {
 }
 
 func makeReddit() (*reddit.Client, error) {
-	if empty(os.Getenv("R_CLIENT_ID")) || empty(os.Getenv("R_CLIENT_SECRET")) || empty(os.Getenv("R_USERNAME")) || empty(os.Getenv("R_PASSWORD")) || empty(os.Getenv("R_SUBREDDIT")) {
+	if empty(os.Getenv("R_CLIENT_ID")) || empty(os.Getenv("R_CLIENT_SECRET")) || empty(os.Getenv("R_USERNAME")) || empty(os.Getenv("R_PASSWORD")) || empty(os.Getenv("R_SUBREDDIT")) || empty(os.Getenv("R_USER_AGENT")) {
 		return nil, fmt.Errorf("One or more required environment variables were empty")
 	}
 
 	return reddit.NewClient(
 		reddit.WithCredentials(os.Getenv("R_CLIENT_ID"), os.Getenv("R_CLIENT_SECRET"), os.Getenv("R_USERNAME"), os.Getenv("R_PASSWORD")),
-		reddit.WithUserAgent("Golang:get.cutie.cafe/rsteamstatus:1.0 (by /u/antigravities)"),
+		reddit.WithUserAgent(os.Getenv("R_USER_AGENT")),
 	)
 }
 
