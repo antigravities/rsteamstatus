@@ -8,8 +8,9 @@ The data is sourced from a secret place. You'll need to know the URL of the secr
 You'll need Go to run the bot. This bot was developed using Go 1.15.1, but I think that any version around this should work fine.
 
 ```
-go get get.cutie.cafe/rsteamstatus
-nano .env #described below
+GO111MODULE=on go get get.cutie.cafe/rsteamstatus
+$EDITOR .env #described below
+wget https://raw.githubusercontent.com/antigravities/rsteamstatus/master/main.tmpl -O main.tmpl
 ~/go/bin/rsteamstatus
 ```
 
@@ -26,11 +27,11 @@ R_SUBREDDIT=
 R_USER_AGENT=
 ```
 
-`R_USER_AGENT` and your outgoing IP must be whitelisted by the secret place. `R_USER_AGENT` is also the `User-Agent` the reddit bot uses (good example: `rsteamstatus/X.X (/u/your_username; your@email.tld)`). Contact the developer of the secret place with your use case for info.
+`R_USER_AGENT` and your outgoing IP must be whitelisted by the secret place. `R_USER_AGENT` is also the `User-Agent` the reddit bot uses (good example: `rsteamstatus/X.X (/u/your_username; your@email.tld)`).
 
 ## License
 ```
-Copyright (C) 2020 Alexandra Frock
+Copyright (C) 2020-2021 Alexandra Frock
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as
