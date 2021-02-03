@@ -26,6 +26,7 @@ jobs:
           R_CLIENT_SECRET: ${{ secrets.R_CLIENT_SECRET }}
           R_USERNAME: ${{ secrets.R_USERNAME }}
           R_PASSWORD: ${{ secrets.R_PASSWORD }}
+          R_USER_AGENT: rsteamstatus/1.1 (CI tests; /u/antigravities; developers@cutie.cafe)
           R_SUBREDDIT: uniQTestArea
 
       - name: Upload artifact

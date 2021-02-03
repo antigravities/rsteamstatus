@@ -17,6 +17,7 @@ func TestIsGoodReturnsProperly(t *testing.T) {
 	assert.Equal("bad", isGood("Service Unavailable"))
 }
 
+/*
 func TestCrowbarReturnsValidResult(t *testing.T) {
 	assert := assert.New(t)
 	status, err := fetchStatus()
@@ -27,6 +28,7 @@ func TestCrowbarReturnsValidResult(t *testing.T) {
 	assert.Less(int64(1606241083), status.Time)
 	assert.Less(float32(0), status.Online)
 }
+*/
 
 func TestReturnsValidRedditInstance(t *testing.T) {
 	reddit, err := makeReddit()
