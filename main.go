@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	_ "embed"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -26,16 +27,21 @@ var translated map[string]string = map[string]string{
 var (
 	httpClient *http.Client    = &http.Client{}
 	ctx        context.Context = context.Background()
+
+	//go:embed main.tmpl
+	tmpl string
 )
 
 func fetchStatus() (*Status, error) {
 	if os.Getenv("R_STATUS_URL") == "" {
-		return nil, fmt.Errorf("The status URL to fetch must be defined as the environment variable R_STATUS_URL")
+		return nil, fmt.Errorf("the status URL to fetch must be defined as the environment variable R_STATUS_URL")
 	}
 
-	httpClient := &http.Client{}
-
 	req, err := http.NewRequest("GET", os.Getenv("R_STATUS_URL"), nil)
+	if err != nil {
+		return nil, err
+	}
+
 	req.Header.Add("User-Agent", os.Getenv("R_USER_AGENT"))
 
 	resp, err := httpClient.Do(req)
@@ -72,7 +78,7 @@ func empty(item string) bool {
 
 func makeReddit() (*reddit.Client, error) {
 	if empty(os.Getenv("R_CLIENT_ID")) || empty(os.Getenv("R_CLIENT_SECRET")) || empty(os.Getenv("R_USERNAME")) || empty(os.Getenv("R_PASSWORD")) || empty(os.Getenv("R_SUBREDDIT")) || empty(os.Getenv("R_USER_AGENT")) {
-		return nil, fmt.Errorf("One or more required environment variables were empty")
+		return nil, fmt.Errorf("one or more required environment variables were empty")
 	}
 
 	return reddit.NewClient(
@@ -133,15 +139,6 @@ func remapStatus(status *Status) *Remap {
 	return remap
 }
 
-func openTemplate(path string) (*template.Template, error) {
-	byts, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-
-	return template.New("template").Parse(string(byts))
-}
-
 func run() error {
 	status, err := fetchStatus()
 	if err != nil || status == nil {
@@ -150,7 +147,7 @@ func run() error {
 
 	remap := remapStatus(status)
 
-	tmpl, err := openTemplate("main.tmpl")
+	tmpl, err := template.New("template").Parse(tmpl)
 	if err != nil {
 		return err
 	}

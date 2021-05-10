@@ -1,16 +1,15 @@
 # /r/Steam status bot
 
-This is the status bot we use on /r/Steam to update the sidebar. It's automatically run every 5 minutes as part of a cron job on a dedicated server hosted in a place far, far away (Europe).
+This is the status bot we use on /r/Steam to update the sidebar. It's automatically run every 15 minutes as a cron job in /r/Steam's container.
 
 The data is sourced from a secret place. You'll need to know the URL of the secret place in order to use this bot.
 
 ## Setup
-You'll need Go to run the bot. This bot was developed using Go 1.15.1, but I think that any version around this should work fine.
+You'll need Go to run the bot. The bot *requires* Go 1.16. The last commit to have Go 1.15 support is 8dd9b8.
 
 ```
 GO111MODULE=on go get get.cutie.cafe/rsteamstatus
 $EDITOR .env #described below
-wget https://raw.githubusercontent.com/antigravities/rsteamstatus/master/main.tmpl -O main.tmpl
 ~/go/bin/rsteamstatus
 ```
 
